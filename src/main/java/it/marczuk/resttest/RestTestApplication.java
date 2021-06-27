@@ -30,11 +30,13 @@ public class RestTestApplication implements CommandLineRunner {
         for(int i=0; i<5; i++) {
             System.out.println(jokeService.getRandomJoke());
         }
+        System.out.println("-------------");
 
         for(int i=0; i<5; i++) {
             System.out.println(jokeService.getRandomJokeByCategory("animal"));
         }
+        System.out.println("-------------");
 
-//        jokeService.getJokeByQuery("dog").forEach(System.out::println);
+        jokeService.getJokeByQuery("dog").forEach(System.out::println);
     }
 }

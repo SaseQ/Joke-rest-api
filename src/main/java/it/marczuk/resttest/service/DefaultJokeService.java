@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -24,16 +23,11 @@ public class DefaultJokeService implements JokeService {
 
     Supplier<Joke> memoizedSupplier = Suppliers.memoize(this::obtainRandomJoke);
 
-    @ParametersAreNonnullByDefault
-    private final LoadingCache<String, Joke> cache = CacheBuilder.newBuilder()
-            .refreshAfterWrite(1, TimeUnit.MINUTES)
+    private final LoadingCache<String, Joke> cache = CacheBuilder
+            .newBuilder()
+            .refreshAfterWrite(10, TimeUnit.MINUTES)
             .maximumSize(3)
-            .build(new CacheLoader<>() {
-        @Override
-        public Joke load(String s){
-            return obtainRandomJokeByCategory(s);
-        }
-    });
+            .build(CacheLoader.from(this::obtainRandomJokeByCategory));
 
     @Autowired
     public DefaultJokeService(RestTemplate restTemplate) {
@@ -53,8 +47,6 @@ public class DefaultJokeService implements JokeService {
     public Joke getRandomJokeByCategory(String category) throws ExecutionException {
         return cache.get(category);
     }
-    //    implemetnacja cache'a dla categorii
-    //    LoadingCache guava porownaj to z memoize
 
     private Joke obtainRandomJokeByCategory(String category) {
         return restTemplate.getForObject(RANDOM_URL + "random?category=" + category, Joke.class);
@@ -65,7 +57,9 @@ public class DefaultJokeService implements JokeService {
         JokeQuery jokeQuery = restTemplate.getForObject(RANDOM_URL + "search?query=" + query, JokeQuery.class);
         return jokeQuery != null ? jokeQuery.getResult() : Collections.emptyList();
     }
+
+    //    implemetnacja cache'a dla categorii
+    //    LoadingCache guava porownaj to z memoize
     //        restTemplate.
-    //        return null;
 
 }
