@@ -29,8 +29,9 @@ public class DefaultJokeService implements JokeService {
 
     private final LoadingCache<String, Joke> cache = CacheBuilder
             .newBuilder()
-            .refreshAfterWrite(10, TimeUnit.MINUTES)
-            .maximumSize(3)
+            .expireAfterAccess(10, TimeUnit.MINUTES) //- remove records that have been idle for 10 minutes
+            //.expireAfterWrite(10, TimeUnit.MINUTES) //- remove records based on their total live time
+            .maximumSize(3) //- limit the size of our cache
             .build(CacheLoader.from(this::obtainRandomJokeByCategory));
 
     private <T> T callGetMethod(String url, Class<T> responseType) {
@@ -48,7 +49,9 @@ public class DefaultJokeService implements JokeService {
 
     @Override
     public Joke getRandomJokeByCategory(String category) throws ExecutionException {
-        return cache.get(category);
+        return cache.getUnchecked(category); //– this computes and loads the value into the cache if it doesn't already exist.
+        //return cache.getIfPresent(category);
+        //return cache.get(category);
     }
 
     private Joke obtainRandomJokeByCategory(String category) {
