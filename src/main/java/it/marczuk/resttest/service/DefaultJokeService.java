@@ -17,9 +17,13 @@ import java.util.function.Supplier;
 @Service
 public class DefaultJokeService implements JokeService {
 
-    RestTemplate restTemplate;
-
     private static final String RANDOM_URL = "https://api.chucknorris.io/jokes/";
+    private final RestTemplate restTemplate;
+
+    @Autowired
+    public DefaultJokeService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     Supplier<Joke> memoizedSupplier = Suppliers.memoize(this::obtainRandomJoke);
 
@@ -29,9 +33,8 @@ public class DefaultJokeService implements JokeService {
             .maximumSize(3)
             .build(CacheLoader.from(this::obtainRandomJokeByCategory));
 
-    @Autowired
-    public DefaultJokeService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    private <T> T callGetMethod(String url, Class<T> responseType) {
+        return restTemplate.getForObject(RANDOM_URL + url, responseType);
     }
 
     @Override
@@ -40,7 +43,7 @@ public class DefaultJokeService implements JokeService {
     }
 
     private Joke obtainRandomJoke() {
-        return restTemplate.getForObject(RANDOM_URL + "random", Joke.class);
+        return callGetMethod("random", Joke.class);
     }
 
     @Override
@@ -49,12 +52,12 @@ public class DefaultJokeService implements JokeService {
     }
 
     private Joke obtainRandomJokeByCategory(String category) {
-        return restTemplate.getForObject(RANDOM_URL + "random?category=" + category, Joke.class);
+        return callGetMethod("random?category=" + category, Joke.class);
     }
 
     @Override
     public List<Joke> getJokeByQuery(String query) {
-        JokeQuery jokeQuery = restTemplate.getForObject(RANDOM_URL + "search?query=" + query, JokeQuery.class);
+        JokeQuery jokeQuery = callGetMethod("search?query=" + query, JokeQuery.class);
         return jokeQuery != null ? jokeQuery.getResult() : Collections.emptyList();
     }
 
