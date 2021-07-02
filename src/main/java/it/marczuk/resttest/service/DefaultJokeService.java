@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -48,7 +47,7 @@ public class DefaultJokeService implements JokeService {
     }
 
     @Override
-    public Joke getRandomJokeByCategory(String category) throws ExecutionException {
+    public Joke getRandomJokeByCategory(String category) {
         return cache.getUnchecked(category); //– this computes and loads the value into the cache if it doesn't already exist.
         //return cache.getIfPresent(category);
         //return cache.get(category);
