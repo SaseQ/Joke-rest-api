@@ -32,4 +32,9 @@ public class JokeController {
     public List<Joke> getJokesByQuery(@RequestParam(required = false) String query) {
         return jokeService.getJokeByQuery(query);
     }
+
+    @GetMapping("/id/{id}")
+    public Joke getJokeById(@PathVariable String id) {
+        return jokeService.getJokeById(id);
+    }
 }

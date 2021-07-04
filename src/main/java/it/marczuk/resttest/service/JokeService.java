@@ -10,4 +10,6 @@ public interface JokeService {
 
     List<Joke> getJokeByQuery(String query);
 
+    Joke getJokeById(String id);
+
 }

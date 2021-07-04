@@ -4,6 +4,8 @@ import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import it.marczuk.resttest.exception.JokeNotFoundExeption;
+import it.marczuk.resttest.repository.JokeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,10 +20,12 @@ public class DefaultJokeService implements JokeService {
 
     private static final String RANDOM_URL = "https://api.chucknorris.io/jokes/";
     private final RestTemplate restTemplate;
+    private final JokeRepository jokeRepository;
 
     @Autowired
-    public DefaultJokeService(RestTemplate restTemplate) {
+    public DefaultJokeService(RestTemplate restTemplate, JokeRepository jokeRepository) {
         this.restTemplate = restTemplate;
+        this.jokeRepository = jokeRepository;
     }
 
     Supplier<Joke> memoizedSupplier = Suppliers.memoize(this::obtainRandomJoke);
@@ -43,7 +47,7 @@ public class DefaultJokeService implements JokeService {
     }
 
     private Joke obtainRandomJoke() {
-        return callGetMethod("random", Joke.class);
+        return datebaseOperation(callGetMethod("random", Joke.class));
     }
 
     @Override
@@ -54,13 +58,25 @@ public class DefaultJokeService implements JokeService {
     }
 
     private Joke obtainRandomJokeByCategory(String category) {
-        return callGetMethod("random?category=" + category, Joke.class);
+        return datebaseOperation(callGetMethod("random?category=" + category, Joke.class));
     }
 
     @Override
     public List<Joke> getJokeByQuery(String query) {
         JokeQuery jokeQuery = callGetMethod("search?query=" + query, JokeQuery.class);
         return jokeQuery != null ? jokeQuery.getResult() : Collections.emptyList();
+    }
+
+    @Override
+    public Joke getJokeById(String id) {
+        return jokeRepository.findById(id).orElseThrow(() -> new JokeNotFoundExeption(id));
+    }
+
+    private Joke datebaseOperation(Joke joke) {
+        if(jokeRepository.findById(joke.getId()).isEmpty()) {
+            jokeRepository.save(joke);
+        }
+        return joke;
     }
 
     //    implemetnacja cache'a dla categorii
