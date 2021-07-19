@@ -1,19 +1,19 @@
 package it.marczuk.resttest;
 
 import it.marczuk.resttest.controller.JokeController;
-import it.marczuk.resttest.service.Joke;
+import it.marczuk.resttest.model.Joke;
 import it.marczuk.resttest.service.JokeService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class JokeControllerTest {
 
     @MockBean
+    @Qualifier("cacheJokeService")
     private JokeService jokeService;
 
     @Autowired
@@ -40,12 +41,12 @@ class JokeControllerTest {
     }
 
     @Test
-    public void shouldCreateMockMvc() {
+    void shouldCreateMockMvc() {
         assertNotNull(mockMvc);
     }
 
     @Test
-    public void shouldReturnRandomJoke() throws Exception {
+    void shouldReturnRandomJoke() throws Exception {
         when(jokeService.getRandomJoke())
                 .thenReturn(new Joke());
 
@@ -58,7 +59,7 @@ class JokeControllerTest {
     }
 
     @Test
-    public void shouldReturnRandomJokeByCategory() throws Exception {
+    void shouldReturnRandomJokeByCategory() throws Exception {
         when(jokeService.getRandomJokeByCategory("animal"))
                 .thenReturn(new Joke());
 
@@ -70,15 +71,15 @@ class JokeControllerTest {
     }
 
     @Test
-    public void shouldReturnRandomJokeByQuery() throws Exception {
+    void shouldReturnRandomJokeByQuery() throws Exception {
         when(jokeService.getJokeByQuery("dog"))
                 .thenReturn(List.of(new Joke()));
 
         this.mockMvc.perform(get("/api/v1/joke/query")
                 .param("query", "dog"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"));
-//                .andExpect(jsonPath("$.size()", Matchers.is(51)));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.size()", Matchers.is(1)));
 //                .andExpect(jsonPath("$.id").value(jokeService.getJokeByQuery("dog").get(0).getId()))
 //                .andExpect(jsonPath("$.value").value(jokeService.getJokeByQuery("dog").get(0).getValue()));
     }

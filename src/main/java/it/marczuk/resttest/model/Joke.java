@@ -1,7 +1,8 @@
-package it.marczuk.resttest.service;
+package it.marczuk.resttest.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -11,5 +12,8 @@ public class Joke {
     @Id
     private String id;
     private String value;
+
+    @Version
+    private Long version;
 
 }

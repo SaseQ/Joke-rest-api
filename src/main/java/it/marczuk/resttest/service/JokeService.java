@@ -1,5 +1,7 @@
 package it.marczuk.resttest.service;
 
+import it.marczuk.resttest.model.Joke;
+
 import java.util.List;
 
 public interface JokeService {
@@ -9,7 +11,5 @@ public interface JokeService {
     Joke getRandomJokeByCategory(String category);
 
     List<Joke> getJokeByQuery(String query);
-
-    Joke getJokeById(String id);
 
 }

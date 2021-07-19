@@ -1,4 +1,4 @@
-package it.marczuk.resttest.service;
+package it.marczuk.resttest.model;
 
 import lombok.Data;
 
