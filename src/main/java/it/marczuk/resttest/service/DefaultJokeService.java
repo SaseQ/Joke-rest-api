@@ -17,10 +17,10 @@ public class DefaultJokeService implements JokeService {
 
     private static final String RANDOM_URL = "https://api.chucknorris.io/jokes/";
     private final RestTemplate restTemplate;
-    private final DatabaseJokeService databaseJokeService;
+    private final DatabaseJokeDao databaseJokeService;
 
     @Autowired
-    public DefaultJokeService(RestTemplate restTemplate, DatabaseJokeService databaseJokeService) {
+    public DefaultJokeService(RestTemplate restTemplate, DatabaseJokeDao databaseJokeService) {
         this.restTemplate = restTemplate;
         this.databaseJokeService = databaseJokeService;
     }
@@ -43,7 +43,7 @@ public class DefaultJokeService implements JokeService {
 
     private <T> T callGetMethod(String url, Class<T> responseType) {
         Optional<T> response = ofNullable(restTemplate.getForObject(RANDOM_URL + url, responseType));
-        return response.orElseThrow(() -> new NullPointerException(""));
+        return response.orElseThrow();
     }
 
 //    private final class DefaultJokeCache {

@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class JokeControllerTest {
 
     @MockBean
-    @Qualifier("cacheJokeService")
     private JokeService jokeService;
 
     @Autowired
