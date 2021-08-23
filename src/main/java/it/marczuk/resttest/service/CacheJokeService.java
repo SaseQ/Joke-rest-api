@@ -6,13 +6,12 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import it.marczuk.resttest.exception.JokeNotFoundExeption;
 import it.marczuk.resttest.model.Joke;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

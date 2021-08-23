@@ -1,11 +1,13 @@
 package it.marczuk.resttest.service;
 
+import it.marczuk.resttest.exception.JokeNotFoundExeption;
 import it.marczuk.resttest.model.Joke;
 import it.marczuk.resttest.model.JokeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,22 +19,25 @@ public class DefaultJokeService implements JokeService {
 
     private static final String RANDOM_URL = "https://api.chucknorris.io/jokes/";
     private final RestTemplate restTemplate;
-    private final DatabaseJokeDao databaseJokeService;
+    private final DatabaseJokeDao databaseJokeDao;
 
     @Autowired
-    public DefaultJokeService(RestTemplate restTemplate, DatabaseJokeDao databaseJokeService) {
+    public DefaultJokeService(RestTemplate restTemplate, DatabaseJokeDao databaseJokeDao) {
         this.restTemplate = restTemplate;
-        this.databaseJokeService = databaseJokeService;
+        this.databaseJokeDao = databaseJokeDao;
     }
 
     @Override
     public Joke getRandomJoke() {
-        return databaseJokeService.databaseOperation(callGetMethod("random", Joke.class));
+        return databaseJokeDao.databaseOperation(callGetMethod("random", Joke.class));
     }
 
     @Override
     public Joke getRandomJokeByCategory(String category) {
-        return databaseJokeService.databaseOperation(callGetMethod("random?category=" + category, Joke.class));
+        if(databaseJokeDao.isItCategory(category)) {
+            return databaseJokeDao.databaseOperation(callGetMethod("random?category=" + category, Joke.class));
+        }
+        throw new JokeNotFoundExeption("Could not find category: " + category);
     }
 
     @Override
@@ -41,7 +46,7 @@ public class DefaultJokeService implements JokeService {
         return jokeQuery != null ? jokeQuery.getResult() : Collections.emptyList();
     }
 
-    private <T> T callGetMethod(String url, Class<T> responseType) {
+    public <T> T callGetMethod(String url, Class<T> responseType) {
         Optional<T> response = ofNullable(restTemplate.getForObject(RANDOM_URL + url, responseType));
         return response.orElseThrow();
     }
