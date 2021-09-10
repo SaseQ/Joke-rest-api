@@ -2,12 +2,11 @@ package it.marczuk.resttest;
 
 import it.marczuk.resttest.controller.JokeController;
 import it.marczuk.resttest.model.Joke;
-import it.marczuk.resttest.service.JokeService;
+import it.marczuk.resttest.service.joke.JokeService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;

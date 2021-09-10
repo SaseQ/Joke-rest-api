@@ -1,4 +1,4 @@
-package it.marczuk.resttest.service;
+package it.marczuk.resttest.service.joke;
 
 import it.marczuk.resttest.model.Joke;
 

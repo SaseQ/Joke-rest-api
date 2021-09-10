@@ -1,4 +1,4 @@
-package it.marczuk.resttest.service;
+package it.marczuk.resttest.service.joke;
 
 import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

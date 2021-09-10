@@ -1,14 +1,17 @@
 version: "3.8"
+
 services:
-  api_service:
+  rest-test:
     build: .
     restart: always
     ports:
-      - 8080:8080
-    links:
-      - mongo_db:app_db
+      - "8080:8080"
+    depends_on:
+      - mongo_db
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
   mongo_db:
-    image: "mongo:4.4.3"
+    image: "mongo:latest"
     restart: always
     ports:
-      - 27017:27017
+      - "27018:27017"

@@ -1,6 +1,8 @@
-package it.marczuk.resttest.service;
+package it.marczuk.resttest.service.categories;
 
 import it.marczuk.resttest.model.Category;
+import it.marczuk.resttest.service.db.DatabaseJokeDao;
+import it.marczuk.resttest.service.joke.DefaultJokeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -10,13 +12,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class JokeCategoriesService {
+public class CategoriesJokeService {
 
     private final DefaultJokeService defaultJokeService;
     private final DatabaseJokeDao databaseJokeDao;
 
     @Autowired
-    public JokeCategoriesService(DefaultJokeService defaultJokeService, DatabaseJokeDao databaseJokeDao) {
+    public CategoriesJokeService(DefaultJokeService defaultJokeService, DatabaseJokeDao databaseJokeDao) {
         this.defaultJokeService = defaultJokeService;
         this.databaseJokeDao = databaseJokeDao;
     }

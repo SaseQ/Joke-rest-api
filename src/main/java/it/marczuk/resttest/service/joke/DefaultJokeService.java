@@ -1,13 +1,13 @@
-package it.marczuk.resttest.service;
+package it.marczuk.resttest.service.joke;
 
 import it.marczuk.resttest.exception.JokeNotFoundExeption;
 import it.marczuk.resttest.model.Joke;
 import it.marczuk.resttest.model.JokeQuery;
+import it.marczuk.resttest.service.db.DatabaseJokeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +29,13 @@ public class DefaultJokeService implements JokeService {
 
     @Override
     public Joke getRandomJoke() {
-        return databaseJokeDao.databaseOperation(callGetMethod("random", Joke.class));
+        return databaseJokeDao.saveJokeIfNotExist(callGetMethod("random", Joke.class));
     }
 
     @Override
     public Joke getRandomJokeByCategory(String category) {
         if(databaseJokeDao.isItCategory(category)) {
-            return databaseJokeDao.databaseOperation(callGetMethod("random?category=" + category, Joke.class));
+            return databaseJokeDao.saveJokeIfNotExist(callGetMethod("random?category=" + category, Joke.class));
         }
         throw new JokeNotFoundExeption("Could not find category: " + category);
     }
