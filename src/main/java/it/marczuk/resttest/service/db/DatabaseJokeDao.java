@@ -24,7 +24,7 @@ public class DatabaseJokeDao {
 
     @Transactional
     public Joke saveJokeIfNotExist(Joke joke) {
-        if(databaseJokeService.findJokeById(joke.getId()).isEmpty()) {
+        if(databaseJokeService.findJokeByIdOptional(joke.getId()).isEmpty()) {
             log.debug("Joke id: {} does not exist in the database", joke.getId());
             databaseJokeService.saveJoke(joke);
         }
@@ -41,7 +41,7 @@ public class DatabaseJokeDao {
     public boolean isItCategory(String category) {
         List<Category> databaseCategories = databaseJokeService.findAllCategories();
         for(Category x: databaseCategories) {
-            if(x.getCategory().equals(category)){
+            if(x.getValue().equals(category)){
                 return true;
             }
         }

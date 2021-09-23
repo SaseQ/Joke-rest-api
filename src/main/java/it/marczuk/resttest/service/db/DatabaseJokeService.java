@@ -1,7 +1,10 @@
 package it.marczuk.resttest.service.db;
 
+import it.marczuk.resttest.exception.CategoryNotFoundException;
+import it.marczuk.resttest.exception.JokeNotFoundException;
 import it.marczuk.resttest.model.Category;
 import it.marczuk.resttest.model.Joke;
+import it.marczuk.resttest.model.joke_dto.JokeDto;
 import it.marczuk.resttest.repository.CategoryRepository;
 import it.marczuk.resttest.repository.JokeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static it.marczuk.resttest.model.joke_dto.JokeDtoMapper.*;
 
 @Service
 public class DatabaseJokeService {
@@ -26,24 +31,30 @@ public class DatabaseJokeService {
         return jokeRepository.findAll();
     }
 
-    public Optional<Joke> findJokeById(String id) {
-        return jokeRepository.findById(id);
+    public Joke findJokeById(String id) {
+        return jokeRepository.findById(id).orElseThrow(() -> new JokeNotFoundException("Could not find joke by id: " + id));
     }
 
-    public List<Joke> findJokesByCategories(List<String> categories) {
-        return jokeRepository.findAllByCategories(categories);
+    public Optional<Joke> findJokeByIdOptional(String id) {
+        return jokeRepository.findById(id);
     }
 
     public List<Category> findAllCategories() {
         return categoryRepository.findAll();
     }
 
-    public Optional<Category> findCategoryById(String id) {
-        return categoryRepository.findById(id);
+    public Category findCategoryById(String id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException("Could not find category by id: " + id));
     }
 
     public void saveJoke(Joke joke) {
         jokeRepository.save(joke);
+    }
+
+    public Joke saveJokeInJokeDto(JokeDto jokeDto) {
+        Joke joke = mapToJoke(jokeDto);
+        jokeRepository.save(mapToJoke(jokeDto));
+        return joke;
     }
 
     public void saveAllCategories(List<Category> categoryList) {

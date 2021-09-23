@@ -1,10 +1,11 @@
 package it.marczuk.resttest.controller;
 
-import it.marczuk.resttest.exception.JokeNotFoundExeption;
 import it.marczuk.resttest.model.Category;
 import it.marczuk.resttest.model.Joke;
+import it.marczuk.resttest.model.joke_dto.JokeDto;
 import it.marczuk.resttest.service.db.DatabaseJokeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class DatabaseController {
 
     @GetMapping("/id/{id}")
     public Joke getJokeById(@PathVariable String id) {
-        return databaseJokeService.findJokeById(id).orElseThrow(() -> new JokeNotFoundExeption("Could not find joke by id: " + id));
+        return databaseJokeService.findJokeById(id);
     }
 
     @GetMapping("/categories")
@@ -37,13 +38,13 @@ public class DatabaseController {
     }
 
     @GetMapping("/categories/id/{id}")
-    public Category getCategoryById(String id) {
-        return databaseJokeService.findCategoryById(id).orElseThrow(() -> new JokeNotFoundExeption("Could not find category by id: " + id));
+    public Category getCategoryById(@PathVariable String id) {
+        return databaseJokeService.findCategoryById(id);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Joke> addNewJoke(@RequestBody Joke joke) {
-        databaseJokeService.saveJoke(joke);
-        return ResponseEntity.status(201).body(joke);
+    public ResponseEntity<Joke> addNewJoke(@RequestBody JokeDto jokeDto) {
+        Joke joke = databaseJokeService.saveJokeInJokeDto(jokeDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(joke);
     }
 }

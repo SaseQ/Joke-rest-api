@@ -1,7 +1,9 @@
 package it.marczuk.resttest.controller;
 
+import it.marczuk.resttest.exception.CategoryNotFoundException;
 import it.marczuk.resttest.exception.ErrorObject;
-import it.marczuk.resttest.exception.JokeNotFoundExeption;
+import it.marczuk.resttest.exception.JokeNotFoundException;
+import it.marczuk.resttest.exception.BadRequestToRestTemplateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,9 +17,9 @@ import java.time.LocalDateTime;
 public class ExceptionAdviceController {
 
     @ResponseBody
-    @ExceptionHandler(JokeNotFoundExeption.class)
+    @ExceptionHandler(JokeNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorObject> jokeNotFoundHandler(JokeNotFoundExeption ex) {
+    public ResponseEntity<ErrorObject> jokeNotFoundHandler(JokeNotFoundException ex) {
 
         ErrorObject eObject = new ErrorObject();
         eObject.setTimestamp(LocalDateTime.now());
@@ -25,5 +27,31 @@ public class ExceptionAdviceController {
         eObject.setMessage(ex.getMessage());
 
         return new ResponseEntity<>(eObject, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(CategoryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorObject> categoryNotFoundHandler(CategoryNotFoundException ex) {
+
+        ErrorObject eObject = new ErrorObject();
+        eObject.setTimestamp(LocalDateTime.now());
+        eObject.setStatus(HttpStatus.NOT_FOUND.value());
+        eObject.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(eObject, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BadRequestToRestTemplateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorObject> badRequestToRestTemplateHandler(BadRequestToRestTemplateException ex) {
+
+        ErrorObject eObject = new ErrorObject();
+        eObject.setTimestamp(LocalDateTime.now());
+        eObject.setStatus(HttpStatus.BAD_REQUEST.value());
+        eObject.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(eObject, HttpStatus.BAD_REQUEST);
     }
 }

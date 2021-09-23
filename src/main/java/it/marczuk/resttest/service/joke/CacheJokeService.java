@@ -4,7 +4,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import it.marczuk.resttest.exception.JokeNotFoundExeption;
+import it.marczuk.resttest.exception.JokeNotFoundException;
 import it.marczuk.resttest.model.Joke;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -35,12 +35,12 @@ public class CacheJokeService implements JokeService {
 
     @Override
     public Joke getRandomJoke() {
-        return defaultJokeCache.getJokeCache().orElseThrow(() -> new JokeNotFoundExeption("Could not find joke"));
+        return defaultJokeCache.getJokeCache().orElseThrow(() -> new JokeNotFoundException("Could not find joke"));
     }
 
     @Override
     public Joke getRandomJokeByCategory(String category) {
-        return defaultJokeCache.getJokeByCategoryCache(category).orElseThrow(() -> new JokeNotFoundExeption("Could not find joke by category: " + category));
+        return defaultJokeCache.getJokeByCategoryCache(category).orElseThrow(() -> new JokeNotFoundException("Could not find joke by category: " + category));
     }
 
     @Override
@@ -48,9 +48,9 @@ public class CacheJokeService implements JokeService {
         return defaultJokeCache.getJokeByQueryCache(query);
     }
 
-    private final class DefaultJokeCache {
+    protected final class DefaultJokeCache {
 
-        private static final int MAX_CACHE_SIZE = 100;
+        private static final int MAX_CACHE_SIZE = 10;
 
         private final Supplier<Joke> memoizedSupplier = Suppliers.memoize(() -> defaultJokeService.getRandomJoke());
 
@@ -61,8 +61,8 @@ public class CacheJokeService implements JokeService {
                 .maximumSize(MAX_CACHE_SIZE) //- limit the size of our cache
                 .build(new CacheLoader<>() {
                     @Override
-                    public Joke load(String catergory) {
-                        return defaultJokeService.getRandomJokeByCategory(catergory);
+                    public Joke load(String category) {
+                        return defaultJokeService.getRandomJokeByCategory(category);
                     }
                 });
 
@@ -74,7 +74,7 @@ public class CacheJokeService implements JokeService {
                 .build(new CacheLoader<>() {
                     @Override
                     public List<Joke> load(String query) {
-                        return defaultJokeService.getJokeByQuery(query);
+                            return defaultJokeService.getJokeByQuery(query);
                     }
                 });
 

@@ -3,7 +3,6 @@ package it.marczuk.resttest;
 import it.marczuk.resttest.controller.JokeController;
 import it.marczuk.resttest.model.Joke;
 import it.marczuk.resttest.service.joke.JokeService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,10 +75,10 @@ class JokeControllerTest {
         this.mockMvc.perform(get("/api/v1/joke/query")
                 .param("query", "dog"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.size()", Matchers.is(1)));
+                .andExpect(content().contentType("application/json"));
 //                .andExpect(jsonPath("$.id").value(jokeService.getJokeByQuery("dog").get(0).getId()))
 //                .andExpect(jsonPath("$.value").value(jokeService.getJokeByQuery("dog").get(0).getValue()));
+
     }
 
 }
