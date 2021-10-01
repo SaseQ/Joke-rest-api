@@ -1,4 +1,4 @@
-package it.marczuk.resttest.configuration;
+package it.marczuk.resttest.configuration.db;
 
 import it.marczuk.resttest.model.Joke;
 import it.marczuk.resttest.repository.CategoryRepository;
