@@ -1,5 +1,6 @@
 package it.marczuk.resttest.service.user;
 
+import it.marczuk.resttest.exception.UserNotFoundException;
 import it.marczuk.resttest.model.user.Role;
 import it.marczuk.resttest.model.user.User;
 import it.marczuk.resttest.repository.UserRepository;
@@ -45,7 +46,7 @@ public class DefaultUserService implements UserService, UserDetailsService {
             return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
         }
 
-        throw new RuntimeException("User not found");
+        throw new UserNotFoundException("User not found");
     }
 
     @Override

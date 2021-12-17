@@ -1,5 +1,6 @@
 package it.marczuk.resttest.configuration.security;
 
+import it.marczuk.resttest.configuration.security.filter.AuthorizationService;
 import it.marczuk.resttest.configuration.security.filter.CustomAuthenticationFilter;
 import it.marczuk.resttest.configuration.security.filter.CustomAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthorizationService authorizationService;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public SecurityConfig(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, AuthorizationService authorizationService) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(GET, "/api/v1/user/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(authorizationService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
